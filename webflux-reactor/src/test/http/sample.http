@@ -1,0 +1,49 @@
+### create #1
+POST {{domain}}/article
+Content-Type: application/json
+
+{
+"title"    : "test 1",
+"body"     : "demo 1",
+"authorId" : 1234
+}
+
+### create #2
+POST {{domain}}/article
+Content-Type: application/json
+
+{
+  "title"    : "test 2",
+  "body"     : "demo 2",
+  "authorId" : 1234
+}
+
+### create #3
+POST {{domain}}/article
+Content-Type: application/json
+
+{
+  "title"    : "test 3",
+  "body"     : "demo 3",
+  "authorId" : 1234
+}
+
+### update
+PUT {{domain}}/article/1
+Content-Type: application/json
+
+{
+  "authorId" : 99369
+}
+
+### get
+GET {{domain}}/article/1
+Content-Type: application/json
+
+### get all
+GET {{domain}}/article/all
+Content-Type: application/json
+
+### delete
+DELETE {{domain}}/article/1
+Content-Type: application/json

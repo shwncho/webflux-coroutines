@@ -1,0 +1,16 @@
+spring:
+  sql:
+    init:
+      schema-locations: classpath:db-init/schema.sql
+
+  logging:
+    level:
+      org.springframework.r2dbc.core: debug
+      org.springframework.r2dbc.connection.init.ScriptUtils: debug
+      com.example: debug
+
+server:
+  error:
+    include-exception: true
+    include-message: always
+    include-stacktrace: always
