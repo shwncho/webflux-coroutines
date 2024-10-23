@@ -1,4 +1,4 @@
-package com.example.webfluxreactor.service
+package com.example.webfluxreactor.application
 
 import com.example.webfluxreactor.domain.Article
 import com.example.webfluxreactor.exception.NoArticleException

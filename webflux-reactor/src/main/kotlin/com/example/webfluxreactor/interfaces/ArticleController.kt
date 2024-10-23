@@ -1,9 +1,9 @@
 package com.example.webfluxreactor.interfaces
 
 import com.example.webfluxreactor.domain.Article
-import com.example.webfluxreactor.service.ArticleService
-import com.example.webfluxreactor.service.ReqCreate
-import com.example.webfluxreactor.service.ReqUpdate
+import com.example.webfluxreactor.application.ArticleService
+import com.example.webfluxreactor.application.ReqCreate
+import com.example.webfluxreactor.application.ReqUpdate
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
