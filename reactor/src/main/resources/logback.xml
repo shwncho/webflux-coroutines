@@ -8,13 +8,4 @@
     <root level="debug">
         <appender-ref ref="stdout" />
     </root>
-    <!--  <logger name="reactor.Flux.MapFuseable" level="debug">-->
-    <!--    <appender-ref ref="stdout" />-->
-    <!--  </logger>-->
-    <!--  <logger name="reactor.Mono.MapFuseable" level="debug">-->
-    <!--    <appender-ref ref="stdout" />-->
-    <!--  </logger>-->
-    <!--  <logger name="dev.fastcampus" level="debug">-->
-    <!--    <appender-ref ref="stdout" />-->
-    <!--  </logger>-->
 </configuration>
