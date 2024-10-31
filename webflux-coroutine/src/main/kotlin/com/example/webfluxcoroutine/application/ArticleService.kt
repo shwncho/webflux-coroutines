@@ -1,6 +1,7 @@
 package com.example.webfluxcoroutine.application
 
 import com.example.webfluxcoroutine.domain.Article
+import com.example.webfluxcoroutine.exception.NotFoundException
 import com.example.webfluxcoroutine.repository.ArticleRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -13,6 +14,10 @@ class ArticleService(
     @Transactional
     suspend fun create(request: ReqCreate): Article{
         return articleRepository.save(request.toArticle())
+    }
+
+    suspend fun get(id: Long): Article{
+        return articleRepository.findById(id) ?: throw NotFoundException("id: $id")
     }
 }
 
