@@ -3,6 +3,7 @@ package com.example.webfluxcoroutine.application
 import com.example.webfluxcoroutine.domain.Article
 import com.example.webfluxcoroutine.exception.NotFoundException
 import com.example.webfluxcoroutine.repository.ArticleRepository
+import kotlinx.coroutines.flow.Flow
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -18,6 +19,11 @@ class ArticleService(
 
     suspend fun get(id: Long): Article{
         return articleRepository.findById(id) ?: throw NotFoundException("id: $id")
+    }
+
+    suspend fun getAll(title: String?): Flow<Article> {
+        if(title.isNullOrEmpty())   return articleRepository.findAll()
+        return articleRepository.findAllByTitleContains(title)
     }
 }
 

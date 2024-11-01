@@ -3,12 +3,14 @@ package com.example.webfluxcoroutine.interfaces
 import com.example.webfluxcoroutine.application.ArticleService
 import com.example.webfluxcoroutine.application.ReqCreate
 import com.example.webfluxcoroutine.domain.Article
+import kotlinx.coroutines.flow.Flow
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
@@ -27,4 +29,10 @@ class ArticleController(
     suspend fun get(@PathVariable id: Long): Article {
         return articleService.get(id)
     }
+
+    @GetMapping("/all")
+    suspend fun getAll(@RequestParam title: String?): Flow<Article> {
+        return articleService.getAll(title)
+    }
+
 }
