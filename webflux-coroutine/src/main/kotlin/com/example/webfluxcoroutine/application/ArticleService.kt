@@ -25,6 +25,16 @@ class ArticleService(
         if(title.isNullOrEmpty())   return articleRepository.findAll()
         return articleRepository.findAllByTitleContains(title)
     }
+
+    @Transactional
+    suspend fun update(id: Long, request: ReqUpdate): Article {
+        return articleRepository.findById(id)?.let { article ->
+            request.title?.let { article.title = it }
+            request.body?.let { article.body = it }
+            request.authorId?.let { article.authorId = it }
+            articleRepository.save(article)
+        } ?: throw NotFoundException("id: $id")
+    }
 }
 
 
@@ -50,3 +60,9 @@ data class ReqCreate(
         )
     }
 }
+
+data class ReqUpdate(
+    var title: String? = null,
+    var body: String? = null,
+    var authorId: Long? = null,
+)
