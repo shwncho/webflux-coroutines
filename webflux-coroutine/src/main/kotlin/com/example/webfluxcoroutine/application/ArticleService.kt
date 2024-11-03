@@ -35,6 +35,11 @@ class ArticleService(
             articleRepository.save(article)
         } ?: throw NotFoundException("id: $id")
     }
+
+    @Transactional
+    suspend fun delete(id: Long) {
+        articleRepository.deleteById(id)
+    }
 }
 
 

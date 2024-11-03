@@ -6,6 +6,7 @@ import com.example.webfluxcoroutine.application.ReqUpdate
 import com.example.webfluxcoroutine.domain.Article
 import kotlinx.coroutines.flow.Flow
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -40,6 +41,11 @@ class ArticleController(
     @PutMapping("/{id}")
     suspend fun update(@PathVariable id: Long, @RequestBody request: ReqUpdate): Article {
         return articleService.update(id, request)
+    }
+
+    @DeleteMapping("/{id}")
+    suspend fun delete(@PathVariable id: Long) {
+        articleService.delete(id)
     }
 
 }
