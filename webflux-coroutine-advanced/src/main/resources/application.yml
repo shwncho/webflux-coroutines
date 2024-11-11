@@ -1,0 +1,32 @@
+spring:
+  output:
+    ansi:
+      enabled: always
+  application:
+    name: webflux-coroutine
+  r2dbc:
+    url: r2dbc:pool:mariadb://localhost:3306/sample
+    username: user
+    password: 1234
+  sql:
+    init:
+      mode: never
+      schema-locations: classpath:db-init/schema.sql
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+logging:
+  level:
+    com.example: debug
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  r2dbc:
+    url: r2dbc:pool:h2:mem://localhost/sample
+  sql:
+    init:
+      mode: embedded
