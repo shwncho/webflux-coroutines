@@ -1,4 +1,8 @@
 spring:
+  profiles:
+    active: local
+---
+spring:
   output:
     ansi:
       enabled: always
@@ -12,14 +16,22 @@ spring:
     init:
       mode: never
       schema-locations: classpath:db-init/schema.sql
+logging:
+  level:
+    com.example: debug
+  pattern:
+    console: "%d{HH:mm:ss.SSS}|%highlight(%-5level)|%X{txid:-}|%green(%t)|%blue(\\(%F:%L\\))|%msg%n"
 ---
 spring:
   config:
     activate:
       on-profile: local
-logging:
-  level:
-    com.example: debug
+  r2dbc:
+    url: r2dbc:pool:h2:mem://localhost/sample
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:db-init/test.sql
 ---
 spring:
   config:
