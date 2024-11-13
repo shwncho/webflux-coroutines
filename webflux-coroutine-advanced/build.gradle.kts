@@ -28,6 +28,7 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.7.3")
 	implementation("org.springframework.boot:spring-boot-starter-aop")
+	implementation("io.micrometer:context-propagation:1.0.5")
 
 	testRuntimeOnly("com.h2database:h2")
 	testRuntimeOnly("io.r2dbc:r2dbc-h2")
