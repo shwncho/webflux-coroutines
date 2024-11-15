@@ -32,6 +32,12 @@ spring:
     init:
       mode: always
       data-locations: classpath:db-init/test.sql
+server:
+  error:
+    include-exception: on
+    include-message: on_param
+    include-stacktrace: on_param
+    include-binding-errors: on_param
 ---
 spring:
   config:

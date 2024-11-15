@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono
 import reactor.util.context.Context
 import java.util.UUID
 
-private const val KEY_TXID = "txid"
+const val KEY_TXID = "txid"
 
 @Component
 @Order(1)
