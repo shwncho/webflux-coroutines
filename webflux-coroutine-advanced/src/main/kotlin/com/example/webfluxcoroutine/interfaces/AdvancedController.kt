@@ -2,6 +2,7 @@ package com.example.webfluxcoroutine.interfaces
 
 import com.example.webfluxcoroutine.application.AdvancedService
 import com.example.webfluxcoroutine.config.validator.DateString
+import com.example.webfluxcoroutine.exception.ExternalApi
 import com.example.webfluxcoroutine.exception.InvalidParameter
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Max
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class AdvancedController(
     private val advancedService: AdvancedService,
+    private val externalApi: ExternalApi,
 ) {
 
     private val logger = KotlinLogging.logger {}
@@ -41,7 +43,11 @@ class AdvancedController(
             throw InvalidParameter(request, request::message,code = "custom code", message = "custom error")
         }
     }
-}
+
+    @GetMapping("/exteranl/delay")
+    suspend fun delay() {
+        externalApi.delay()
+    }}
 
 data class ReqErrorTest (
     @field:NotEmpty

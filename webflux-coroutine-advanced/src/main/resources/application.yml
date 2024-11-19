@@ -21,6 +21,9 @@ logging:
     com.example: debug
   pattern:
     console: "%d{HH:mm:ss.SSS}|%highlight(%-5level)|%X{txid:-}|%green(%t)|%blue(\\(%F:%L\\))|%msg%n"
+api:
+  external:
+    api: http://localhost:8081
 ---
 spring:
   config:
