@@ -2,7 +2,7 @@ package com.example.webfluxcoroutine.interfaces
 
 import com.example.webfluxcoroutine.application.AdvancedService
 import com.example.webfluxcoroutine.config.validator.DateString
-import com.example.webfluxcoroutine.exception.ExternalApi
+import com.example.webfluxcoroutine.application.ExternalApi
 import com.example.webfluxcoroutine.exception.InvalidParameter
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Max
@@ -15,6 +15,7 @@ import kotlinx.coroutines.withContext
 import mu.KotlinLogging
 import org.jetbrains.annotations.NotNull
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
@@ -47,7 +48,13 @@ class AdvancedController(
     @GetMapping("/exteranl/delay")
     suspend fun delay() {
         externalApi.delay()
-    }}
+    }
+
+    @GetMapping("/external/circuit/{flag}", "/external/circuit", "/external/circuit/" )
+    suspend fun testCircuitBreaker(@PathVariable flag: String): String {
+        return externalApi.testCircuitBreaker(flag)
+    }
+}
 
 data class ReqErrorTest (
     @field:NotEmpty
