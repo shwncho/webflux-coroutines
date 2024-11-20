@@ -4,6 +4,9 @@ import io.github.resilience4j.circuitbreaker.CallNotPermittedException
 import io.github.resilience4j.circuitbreaker.CircuitBreaker
 import io.github.resilience4j.kotlin.circuitbreaker.CircuitBreakerConfig
 import io.github.resilience4j.kotlin.circuitbreaker.executeSuspendFunction
+import io.github.resilience4j.kotlin.ratelimiter.RateLimiterConfig
+import io.github.resilience4j.kotlin.ratelimiter.executeSuspendFunction
+import io.github.resilience4j.ratelimiter.RateLimiter
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
@@ -33,9 +36,11 @@ class ExternalApi(
     suspend fun testCircuitBreaker(flag: String): String {
         logger.debug { "1. request call"}
         return try {
-            circuitBreaker.executeSuspendFunction {
-                logger.debug { "2. call external"}
-                client.get().uri("/test/circuit/child/$flag").retrieve().awaitBody()
+            rateLimiter.executeSuspendFunction {
+                circuitBreaker.executeSuspendFunction {
+                    logger.debug { "2. call external" }
+                    client.get().uri("/test/circuit/child/$flag").retrieve().awaitBody()
+                }
             }
         } catch (e: CallNotPermittedException){
             "call later (blocked by circuit breaker)"
@@ -54,5 +59,11 @@ class ExternalApi(
         waitDurationInOpenState(10.seconds.toJavaDuration())
         // half-open 상태에서 허용할 요청 수
         permittedNumberOfCallsInHalfOpenState(3)
+    })
+
+    val rateLimiter = RateLimiter.of("rps-limiter", RateLimiterConfig {
+        limitForPeriod(2)
+        limitRefreshPeriod(10.seconds.toJavaDuration())
+        timeoutDuration(5.seconds.toJavaDuration())
     })
 }
