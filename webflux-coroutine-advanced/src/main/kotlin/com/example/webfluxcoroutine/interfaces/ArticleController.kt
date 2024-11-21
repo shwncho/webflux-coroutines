@@ -1,6 +1,7 @@
 package com.example.webfluxcoroutine.interfaces
 
 import com.example.webfluxcoroutine.application.ArticleService
+import com.example.webfluxcoroutine.application.QryArticle
 import com.example.webfluxcoroutine.application.ReqCreate
 import com.example.webfluxcoroutine.application.ReqUpdate
 import com.example.webfluxcoroutine.domain.Article
@@ -33,9 +34,14 @@ class ArticleController(
         return articleService.get(id)
     }
 
+//    @GetMapping("/all")
+////    suspend fun getAll(@RequestParam title: String?): Flow<Article> {
+////        return articleService.getAll(title)
+////    }
+
     @GetMapping("/all")
-    suspend fun getAll(@RequestParam title: String?): Flow<Article> {
-        return articleService.getAll(title)
+    suspend fun getAll(request: QryArticle): Flow<Article> {
+        return articleService.getAll(request)
     }
 
     @PutMapping("/{id}")
