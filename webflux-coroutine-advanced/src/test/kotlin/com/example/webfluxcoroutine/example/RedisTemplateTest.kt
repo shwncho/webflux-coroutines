@@ -87,6 +87,16 @@ class RedisTemplateTest(
         ops.all(KEY) shouldBe listOf(2,7,6,4,3,1,3)
     }
 
+    "hash" {
+        val ops = template.opsForHash<Int, String>()
+        val map = (1..10).map {it to "val-$it"}.toMap()
+        ops.putAll(KEY,map).awaitSingle()
+
+        ops.size(KEY).awaitSingle() shouldBe 10
+        ops.get(KEY,1).awaitSingle() shouldBe "val-1"
+        ops.get(KEY,8).awaitSingle() shouldBe "val-8"
+
+    }
 })
 
 suspend fun ReactiveListOperations<Any, Any>.all(key: Any): List<Any> {
