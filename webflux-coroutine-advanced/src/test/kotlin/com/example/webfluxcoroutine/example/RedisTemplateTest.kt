@@ -9,10 +9,14 @@ import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitSingle
 import mu.KotlinLogging
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.domain.Range
 import org.springframework.data.redis.connection.DataType
 import org.springframework.data.redis.core.ReactiveListOperations
 import org.springframework.data.redis.core.ReactiveRedisTemplate
+import org.springframework.data.redis.core.ReactiveZSetOperations
 import org.springframework.test.context.ActiveProfiles
+import java.util.*
+import kotlin.NoSuchElementException
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
@@ -95,10 +99,36 @@ class RedisTemplateTest(
         ops.size(KEY).awaitSingle() shouldBe 10
         ops.get(KEY,1).awaitSingle() shouldBe "val-1"
         ops.get(KEY,8).awaitSingle() shouldBe "val-8"
+    }
 
+    "sorted set" {
+        val ops = template.opsForZSet()
+        listOf(8,7,1,4,13,22,9,7,8).forEach {
+            ops.add(KEY, "$it", -1.0 * Date().time).awaitSingle()
+//            ops.all(KEY).let { logger.debug { it }}
+        }
+
+        template.delete(KEY).awaitSingle()
+
+        listOf(
+            "jake"     to 123,
+            "chulsoo"  to 752,
+            "yeonghee" to 932,
+            "john"     to 335,
+            "jake"     to 623,
+        ).also {
+            it.toMap().toList().sortedBy { it.second }.let { logger.debug { "original: $it" } }
+        }.forEach {
+            ops.add(KEY, it.first, it.second * -1.0).awaitSingle()
+            ops.all(KEY).let { logger.debug { it } }
+        }
     }
 })
 
 suspend fun ReactiveListOperations<Any, Any>.all(key: Any): List<Any> {
     return this.range(key,0,-1).asFlow().toList()
+}
+
+suspend fun ReactiveZSetOperations<Any,Any>.all(key: Any): List<Any> {
+    return this.range(key,Range.closed(0,-1)).asFlow().toList()
 }
