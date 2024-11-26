@@ -75,6 +75,18 @@ class RedisTemplateTest(
         ops.rightPop(KEY).awaitSingle() shouldBe 6
         ops.all(KEY) shouldBe listOf(9,3,4,5)
     }
+
+    "LinkedList LRU" {
+        val ops = template.opsForList()
+        ops.rightPushAll(KEY,7,6,4,3,2,1,3).awaitSingle()
+
+        ops.remove(KEY,0,2,).awaitSingle()
+        ops.all(KEY) shouldBe listOf(7,6,4,3,1,3)
+
+        ops.leftPush(KEY,2).awaitSingle()
+        ops.all(KEY) shouldBe listOf(2,7,6,4,3,1,3)
+    }
+
 })
 
 suspend fun ReactiveListOperations<Any, Any>.all(key: Any): List<Any> {
