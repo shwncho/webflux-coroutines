@@ -4,13 +4,20 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitSingle
 import mu.KotlinLogging
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.Range
+import org.springframework.data.geo.Circle
+import org.springframework.data.geo.Distance
+import org.springframework.data.geo.Metrics
+import org.springframework.data.geo.Point
 import org.springframework.data.redis.connection.DataType
+import org.springframework.data.redis.connection.RedisGeoCommands
+import org.springframework.data.redis.connection.RedisGeoCommands.*
 import org.springframework.data.redis.core.ReactiveListOperations
 import org.springframework.data.redis.core.ReactiveRedisTemplate
 import org.springframework.data.redis.core.ReactiveZSetOperations
@@ -121,6 +128,32 @@ class RedisTemplateTest(
         }.forEach {
             ops.add(KEY, it.first, it.second * -1.0).awaitSingle()
             ops.all(KEY).let { logger.debug { it } }
+        }
+    }
+
+    "geo redis" {
+        val ops = template.opsForGeo()
+
+        listOf(
+            GeoLocation("seoul", Point(126.97806, 37.56667)),
+            GeoLocation("busan", Point(129.07556, 35.17944)),
+            GeoLocation("incheon", Point(126.70528, 37.45639)),
+            GeoLocation("daegu",   Point(128.60250, 35.87222)),
+            GeoLocation("anyang",  Point(126.95556, 37.39444)),
+            GeoLocation("daejeon", Point(127.38500, 36.35111)),
+            GeoLocation("gwangju", Point(126.85306, 35.15972)),
+            GeoLocation("suwon",   Point(127.02861, 37.26389)),
+        ).forEach {
+            ops.add(KEY,it as GeoLocation<Any>).awaitSingle()
+        }
+
+        ops.distance(KEY, "seoul", "busan").awaitSingle().let { logger.debug { "seoul -> busan : $it" } }
+
+        val p = ops.position(KEY, "daegu").awaitSingle().also { logger.debug{ it } }
+        val circle = Circle(p, Distance(200.0, Metrics.KILOMETERS))
+
+        ops.radius(KEY, circle).asFlow().map { it.content.name }.toList().let {
+            logger.debug { "cities near daegu: $it" }
         }
     }
 })
