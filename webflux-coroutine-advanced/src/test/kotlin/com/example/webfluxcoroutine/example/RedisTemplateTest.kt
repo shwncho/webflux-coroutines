@@ -156,6 +156,15 @@ class RedisTemplateTest(
             logger.debug { "cities near daegu: $it" }
         }
     }
+
+    "hyper loglog" {
+        val ops = template.opsForHyperLogLog()
+        ops.add("page1","192.179.0.23","41.61.2.230","225.105.161.131").awaitSingle()
+        ops.add("page2","1.1.1.1","2.2.2.2").awaitSingle()
+        ops.add("page3","9.9.9.9").awaitSingle()
+        ops.add("page3","8.8.8.8").awaitSingle()
+        ops.add("page3","7.7.7.7","2.2.2.2","1.1.1.1").awaitSingle()
+        ops.size("page3").awaitSingle().let { logger.debug { it } } }
 })
 
 suspend fun ReactiveListOperations<Any, Any>.all(key: Any): List<Any> {
