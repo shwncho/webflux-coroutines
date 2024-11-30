@@ -3,8 +3,12 @@ package com.example.webfluxcoroutine.example
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitSingle
@@ -164,7 +168,30 @@ class RedisTemplateTest(
         ops.add("page3","9.9.9.9").awaitSingle()
         ops.add("page3","8.8.8.8").awaitSingle()
         ops.add("page3","7.7.7.7","2.2.2.2","1.1.1.1").awaitSingle()
-        ops.size("page3").awaitSingle().let { logger.debug { it } } }
+        ops.size("page3").awaitSingle().let { logger.debug { it } }
+    }
+
+    "pub / sub" {
+
+        template.listenToChannel("channel-1").doOnNext{
+            logger.debug { ">> received 1: ${it.message}" }
+        }.subscribe()
+
+        template.listenToChannel("channel-1").doOnNext{
+            logger.debug { ">> received 2: ${it.message}" }
+        }.subscribe()
+
+        template.listenToChannel("channel-1").asFlow().onEach {
+            logger.debug { ">> received 3: ${it.message}" }
+        }.launchIn(CoroutineScope(Dispatchers.Default))
+
+        repeat(10) {
+            val message = "test message (${it + 1})"
+            logger.debug { ">> send: $message" }
+            template.convertAndSend("channel-1", message).awaitSingle()
+            delay(1000)
+        }
+    }
 })
 
 suspend fun ReactiveListOperations<Any, Any>.all(key: Any): List<Any> {
