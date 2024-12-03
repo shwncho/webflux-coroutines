@@ -6,17 +6,26 @@ import com.example.webfluxcoroutine.domain.Article
 import com.example.webfluxcoroutine.exception.NotFoundException
 import com.example.webfluxcoroutine.repository.ArticleRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.reactor.awaitSingleOrNull
+import org.springframework.cache.interceptor.SimpleKey
+import org.springframework.data.redis.core.ReactiveRedisTemplate
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.flow
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toJavaDuration
 
 @Service
 class ArticleService(
     private val articleRepository: ArticleRepository,
     private val dbClient: DatabaseClient,
+    redisTemplate: ReactiveRedisTemplate<Any, Any>
 ) {
+
+    private val ops = redisTemplate.opsForValue()
 
     @Transactional
     suspend fun create(request: ReqCreate): Article{
@@ -24,7 +33,10 @@ class ArticleService(
     }
 
     suspend fun get(id: Long): Article{
-        return articleRepository.findById(id) ?: throw NotFoundException("id: $id")
+        val key = SimpleKey("/article/get",id)
+        return ops.get(key).awaitSingleOrNull()?.let { it as Article }
+            ?: articleRepository.findById(id)?.also { ops.set(key,it,10.seconds.toJavaDuration()).awaitSingle() }
+            ?: throw NotFoundException("id: $id")
     }
 
 //    suspend fun getAll(title: String?): Flow<Article> {
@@ -73,17 +85,23 @@ class ArticleService(
 
     @Transactional
     suspend fun update(id: Long, request: ReqUpdate): Article {
-        return articleRepository.findById(id)?.let { article ->
-            request.title?.let { article.title = it }
-            request.body?.let { article.body = it }
-            request.authorId?.let { article.authorId = it }
-            articleRepository.save(article)
-        } ?: throw NotFoundException("id: $id")
+        val article = articleRepository.findById(id) ?: throw NotFoundException("id: $id")
+        return articleRepository.save(article.apply {
+            request.title?.let { title = it }
+            request.body?.let { body = it }
+            request.authorId?.let { authorId = it }
+        }).also {
+            val key = SimpleKey("/article/get", id)
+            ops.delete(key).awaitSingle()
+        }
     }
 
     @Transactional
     suspend fun delete(id: Long) {
-        articleRepository.deleteById(id)
+        articleRepository.deleteById(id).also {
+            val key = SimpleKey("/article/get", id)
+            ops.delete(key).awaitSingle()
+        }
     }
 }
 

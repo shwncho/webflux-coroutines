@@ -19,6 +19,10 @@ spring:
 logging:
   level:
     com.example: debug
+    org.springframework.r2dbc.core: debug
+    org.springframework.r2dbc.connection.init: debug
+    org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler: off
+    org.springframework.web.HttpLogging: off
   pattern:
     console: "%d{HH:mm:ss.SSS}|%highlight(%-5level)|%X{txid:-}|%green(%t)|%blue(\\(%F:%L\\))|%msg%n"
 api:
