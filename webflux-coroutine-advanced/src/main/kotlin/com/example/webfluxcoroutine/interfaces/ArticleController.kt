@@ -41,7 +41,7 @@ class ArticleController(
 
     @GetMapping("/all")
     suspend fun getAll(request: QryArticle): Flow<Article> {
-        return articleService.getAll(request)
+        return articleService.getAllCached(request)
     }
 
     @PutMapping("/{id}")
