@@ -3,6 +3,7 @@ package com.example.webfluxcoroutine.domain
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.annotation.Version
 import org.springframework.data.relational.core.mapping.Table
 import java.io.Serializable
 import java.time.LocalDateTime
@@ -14,6 +15,9 @@ class Article(
     var title: String = "",
     var body: String? = null,
     var authorId: Long? = null,
+    var balance: Long = 0,
+    @Version
+    var version: Int = 1
 ): BaseEntity(), Serializable {
 
     override fun equals(other: Any?): Boolean {

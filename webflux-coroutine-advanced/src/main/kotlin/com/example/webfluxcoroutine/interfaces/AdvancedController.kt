@@ -1,8 +1,10 @@
 package com.example.webfluxcoroutine.interfaces
 
+import com.example.webfluxcoroutine.application.AccountService
 import com.example.webfluxcoroutine.application.AdvancedService
 import com.example.webfluxcoroutine.config.validator.DateString
 import com.example.webfluxcoroutine.application.ExternalApi
+import com.example.webfluxcoroutine.application.ResAccount
 import com.example.webfluxcoroutine.exception.InvalidParameter
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Max
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController
 class AdvancedController(
     private val advancedService: AdvancedService,
     private val externalApi: ExternalApi,
+    private val accountService: AccountService
 ) {
 
     private val logger = KotlinLogging.logger {}
@@ -53,6 +56,17 @@ class AdvancedController(
     @GetMapping("/external/circuit/{flag}", "/external/circuit", "/external/circuit/" )
     suspend fun testCircuitBreaker(@PathVariable flag: String): String {
         return externalApi.testCircuitBreaker(flag)
+    }
+
+    @GetMapping("/account/{id}")
+    suspend fun getAccount(@PathVariable id: Long): ResAccount {
+        return accountService.get(id)
+    }
+
+    @PutMapping("/account/{id}/{amount}")
+    suspend fun deposit(@PathVariable id: Long, @PathVariable amount: Long): ResAccount {
+        accountService.deposit(id, amount)
+        return accountService.get(id)
     }
 }
 
