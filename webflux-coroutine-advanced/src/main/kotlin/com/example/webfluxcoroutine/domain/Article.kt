@@ -16,7 +16,7 @@ class Article(
     var body: String? = null,
     var authorId: Long? = null,
     var balance: Long = 0,
-    @Version
+//    @Version
     var version: Int = 1
 ): BaseEntity(), Serializable {
 

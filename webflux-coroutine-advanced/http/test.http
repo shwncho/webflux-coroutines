@@ -1,2 +1,7 @@
+### put
 PUT localhost:8080/account/1/100
+Content-Type: application/json
+
+### get
+GET localhost:8080/account/1
 Content-Type: application/json
