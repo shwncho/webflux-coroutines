@@ -65,7 +65,7 @@ class AdvancedController(
 
     @PutMapping("/account/{id}/{amount}")
     suspend fun deposit(@PathVariable id: Long, @PathVariable amount: Long): ResAccount {
-        accountService.deposit(id, amount)
+        accountService.addBalance(id, amount)
         return accountService.get(id)
     }
 }

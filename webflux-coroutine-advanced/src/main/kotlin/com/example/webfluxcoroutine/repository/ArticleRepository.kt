@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository
 interface ArticleRepository: CoroutineCrudRepository<Article, Long> {
     suspend fun findAllByTitleContains(title: String): Flow<Article>
 
-    @Lock(LockMode.PESSIMISTIC_WRITE)
+//    @Lock(LockMode.PESSIMISTIC_WRITE)
     suspend fun findArticleById(id: Long): Article?
 }
