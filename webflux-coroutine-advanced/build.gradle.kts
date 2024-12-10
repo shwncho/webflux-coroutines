@@ -41,8 +41,7 @@ dependencies {
 	testRuntimeOnly("io.r2dbc:r2dbc-h2")
 	runtimeOnly("org.mariadb:r2dbc-mariadb:1.1.3")
 	runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
-	runtimeOnly("com.h2database:h2")
-	runtimeOnly("io.r2dbc:r2dbc-h2")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.projectreactor:reactor-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
