@@ -11,19 +11,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.reactor.awaitSingle
-import kotlinx.coroutines.reactor.awaitSingleOrNull
-import org.springframework.cache.interceptor.SimpleKey
-import org.springframework.data.redis.core.ReactiveRedisTemplate
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.flow
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.io.Serializable
 import java.time.LocalDateTime
-import javax.cache.Cache
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.toJavaDuration
 
 @Service
 class ArticleService(
@@ -33,8 +27,8 @@ class ArticleService(
 ) {
 
     init {
-        cache.TTL["/article/get"] = 10.seconds
-        cache.TTL["/article/get/all"] = 10.seconds
+        cache.ttl["/article/get"] = 10.seconds
+        cache.ttl["/article/get/all"] = 10.seconds
     }
 
     @Transactional
