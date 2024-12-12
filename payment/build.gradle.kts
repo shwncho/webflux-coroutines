@@ -16,9 +16,12 @@ java {
 
 repositories {
 	mavenCentral()
+	maven("https://jitpack.io")
 }
 
 dependencies {
+
+	implementation("com.github.consoleau:kassava:2.1.0")
 	implementation("io.github.microutils:kotlin-logging:3.0.5")
 	implementation("io.micrometer:context-propagation:1.0.5")
 	implementation("org.springframework.boot:spring-boot-starter-aop")
