@@ -33,3 +33,9 @@ logging:
     org.springframework.web.HttpLogging: off
   pattern:
     console: "%d{HH:mm:ss.SSS}|%highlight(%-5level)|%X{txid:-}|%green(%t)|%blue(\\(%F:%L\\))|%msg%n"
+
+payment:
+  toss:
+    key:
+      client: test_ck_E92LAa5PVbLA2Aa97AOe87YmpXyJ
+      secret: dGVzdF9za19rWUc1N0ViYTNHanc0dzE2bUxrajhwV0RPeG1BOg==
