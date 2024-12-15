@@ -8,10 +8,10 @@ spring:
     url: r2dbc:pool:mariadb://localhost:3306/sample
     username: user
     password: 1234
-#  sql:
-#    init:
-#      mode: never
-#      schema-locations: classpath:db-init/schema.sql
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db-init/schema.sql
   data:
     redis:
       host: localhost
@@ -39,3 +39,14 @@ payment:
     key:
       client: test_ck_E92LAa5PVbLA2Aa97AOe87YmpXyJ
       secret: dGVzdF9za19rWUc1N0ViYTNHanc0dzE2bUxrajhwV0RPeG1BOg==
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  r2dbc:
+    url: r2dbc:pool:h2:mem://localhost/payment
+  sql:
+    init:
+      mode: always
+      data-locations: ""
