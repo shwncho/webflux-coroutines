@@ -12,7 +12,7 @@ import org.springframework.data.relational.core.mapping.Table
 @Table(name = "TB_PROD")
 class Product(
     @Id
-    val id: Long = 0,
+    var id: Long = 0,
     var name: String = "",
     var price: Long = 0,
 ): BaseEntity(), Persistable<Long> {

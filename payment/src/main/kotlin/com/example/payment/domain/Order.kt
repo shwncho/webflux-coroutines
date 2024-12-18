@@ -9,7 +9,7 @@ import org.springframework.data.relational.core.mapping.Table
 @Table("TB_ORDER")
 class Order(
     @Id
-    val id: Long = 0,
+    var id: Long = 0,
     val userId: Long,
     var description: String? = null,
     var amount: Long = 0,
