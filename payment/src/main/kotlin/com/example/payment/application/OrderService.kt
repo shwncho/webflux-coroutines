@@ -15,13 +15,12 @@ import java.util.*
 class OrderService(
     private val orderRepository: OrderRepository,
     private val productService: ProductService,
-    private val productRepository: ProductRepository,
     private val productInOrderRepository: ProductInOrderRepository,
 ) {
     suspend fun create(request: ReqCreateOrder): Order {
 
         val prodIds = request.products.map { it.prodId }.toSet()
-        val productsById = productRepository.findAllById(prodIds).toList().associateBy { it.id }
+        val productsById = request.products.mapNotNull { productService.get(it.prodId) }.associateBy { it.id }
         prodIds.filter { !productsById.containsKey(it) }.let{ remains ->
             if(remains.isNotEmpty()){
                 throw NoProductFound("prod ids: $remains")
