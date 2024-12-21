@@ -1,5 +1,6 @@
 package com.example.payment.application
 
+import com.example.exception.NoOrderFound
 import com.example.exception.NoProductFound
 import com.example.payment.domain.Order
 import com.example.payment.domain.PgStatus
@@ -52,6 +53,14 @@ class OrderService(
 
         return newOrder
 
+    }
+
+    suspend fun get(id: Long): Order {
+        return orderRepository.findById(id) ?: throw NoOrderFound("orderId: $id")
+    }
+
+    suspend fun getAll(userId: Long): List<Order> {
+        return orderRepository.findAllByUserIdOrderByCreatedAtDesc(userId)
     }
 }
 
