@@ -1,14 +1,12 @@
 package com.example.payment.application
 
-import com.example.exception.NoOrderFound
-import com.example.exception.NoProductFound
 import com.example.payment.domain.Order
 import com.example.payment.domain.PgStatus
 import com.example.payment.domain.ProductInOrder
+import com.example.payment.exception.NoOrderFound
+import com.example.payment.exception.NoProductFound
 import com.example.payment.infrastructure.OrderRepository
 import com.example.payment.infrastructure.ProductInOrderRepository
-import com.example.payment.infrastructure.ProductRepository
-import kotlinx.coroutines.flow.toList
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -61,6 +59,10 @@ class OrderService(
 
     suspend fun getAll(userId: Long): List<Order> {
         return orderRepository.findAllByUserIdOrderByCreatedAtDesc(userId)
+    }
+
+    suspend fun delete(id: Long) {
+        orderRepository.deleteById(id)
     }
 }
 

@@ -18,7 +18,7 @@ private val logger = KotlinLogging.logger {}
 @SpringBootTest
 @ActiveProfiles("test")
 class OrderServiceTest(
-    @Autowired orderService: OrderService,
+    @Autowired orderService: com.example.payment.application.OrderService,
     @Autowired productRepository: ProductRepository,
     @Autowired productInOrderRepository: ProductInOrderRepository,
 ): StringSpec({
@@ -32,13 +32,15 @@ class OrderServiceTest(
 
     "create on fail" {
 
-        val request = ReqCreateOrder(11, listOf(
-            ReqProdQuantity(1,1),
-            ReqProdQuantity(2,2),
-            ReqProdQuantity(3,3),
-            ReqProdQuantity(4,4),
-            ReqProdQuantity(5,5),
-        ))
+        val request = com.example.payment.application.ReqCreateOrder(
+            11, listOf(
+                com.example.payment.application.ReqProdQuantity(1, 1),
+                com.example.payment.application.ReqProdQuantity(2, 2),
+                com.example.payment.application.ReqProdQuantity(3, 3),
+                com.example.payment.application.ReqProdQuantity(4, 4),
+                com.example.payment.application.ReqProdQuantity(5, 5),
+            )
+        )
 
         shouldThrow<NoProductFound> {
             orderService.create(request)
@@ -47,12 +49,14 @@ class OrderServiceTest(
 
     "create" {
 
-        val request = ReqCreateOrder(11, listOf(
-            ReqProdQuantity(1,1),
-            ReqProdQuantity(2,2),
-            ReqProdQuantity(3,3),
-            ReqProdQuantity(4,4),
-        ))
+        val request = com.example.payment.application.ReqCreateOrder(
+            11, listOf(
+                com.example.payment.application.ReqProdQuantity(1, 1),
+                com.example.payment.application.ReqProdQuantity(2, 2),
+                com.example.payment.application.ReqProdQuantity(3, 3),
+                com.example.payment.application.ReqProdQuantity(4, 4),
+            )
+        )
 
         val order = orderService.create(request).also { logger.debug { it } }
 

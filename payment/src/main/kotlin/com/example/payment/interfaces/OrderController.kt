@@ -1,0 +1,89 @@
+package com.example.payment.interfaces
+
+import com.example.payment.application.OrderService
+import com.example.payment.application.ReqCreateOrder
+import com.example.payment.common.Beans.Companion.beanProductInOrderRepository
+import com.example.payment.common.Beans.Companion.beanProductService
+import com.example.payment.domain.Order
+import com.example.payment.domain.PgStatus
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
+import java.time.LocalDateTime
+
+@RestController
+@RequestMapping("/orders")
+class OrderController(
+    private val orderService: OrderService,
+) {
+
+    @GetMapping("/{id}")
+    suspend fun get(@PathVariable id: Long): ResOrder {
+        return orderService.get(id).toResOrder()
+    }
+
+    @GetMapping("/all/{userId}")
+    suspend fun getAll(@PathVariable userId: Long): List<ResOrder> {
+        return orderService.getAll(userId).map { it.toResOrder() }
+    }
+
+    @PostMapping
+    suspend fun create(@RequestBody request: ReqCreateOrder): ResOrder {
+        return orderService.create(request).toResOrder()
+    }
+
+    @DeleteMapping("/{id}")
+    suspend fun delete(@PathVariable id: Long) {
+        orderService.delete(id)
+    }
+}
+
+suspend fun Order.toResOrder(): ResOrder {
+    return this.let{
+        ResOrder(
+            id = it.id,
+            userId = it.userId,
+            description = it.description,
+            amount = it.amount,
+            pgOrderId = it.pgOrderId,
+            pgKey = it.pgKey,
+            pgStatus = it.pgStatus,
+            pgRetryCount = it.pgRetryCount,
+            createdAt = it.createdAt,
+            updatedAt = it.updatedAt,
+            products = beanProductInOrderRepository.findAllByOrderId(it.id).map { prodInOrd ->
+                ResProductQuantity(
+                    id = prodInOrd.prodId,
+                    name = beanProductService.get(prodInOrd.prodId)?.name ?: "unknown",
+                    price = prodInOrd.price,
+                    quantity = prodInOrd.quantity,
+                )
+            },
+        )
+    }
+}
+
+data class ResOrder(
+    val id: Long,
+    val userId: Long,
+    val description: String? = null,
+    val amount: Long,
+    val pgOrderId: String? = null,
+    val pgKey: String? = null,
+    val pgStatus: PgStatus = PgStatus.CREATE,
+    val pgRetryCount: Int,
+    val createdAt: LocalDateTime? = null,
+    val updatedAt: LocalDateTime? = null,
+    val products: List<ResProductQuantity>
+)
+
+data class ResProductQuantity(
+    val id: Long,
+    val name: String,
+    val price: Long,
+    val quantity: Int,
+)
