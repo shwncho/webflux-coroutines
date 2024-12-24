@@ -17,4 +17,10 @@ class ViewController(
         model.addAttribute("order", orderService.get(3).toResOrder())
         return "hello-world.html"
     }
+
+    @GetMapping("/pay/{orderId}")
+    suspend fun pay(@PathVariable orderId: Long, model: Model): String {
+        model.addAttribute("order", orderService.get(orderId))
+        return "pay.html"
+    }
 }
