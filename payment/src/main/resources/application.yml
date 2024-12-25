@@ -39,6 +39,7 @@ logging:
 
 payment:
   toss:
+    domain: https://api.tosspayments.com
     key:
       client: test_ck_E92LAa5PVbLA2Aa97AOe87YmpXyJ
       secret: dGVzdF9za19rWUc1N0ViYTNHanc0dzE2bUxrajhwV0RPeG1BOg==

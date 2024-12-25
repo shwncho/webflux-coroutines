@@ -23,4 +23,35 @@ class ViewController(
         model.addAttribute("order", orderService.get(orderId))
         return "pay.html"
     }
+
+    @GetMapping("/pay/success")
+    suspend fun paySucceed(request: ReqPaySucceed): String {
+        if(!orderService.authSucceed(request))
+            return "pay-fail.html"
+        orderService.capture(request)
+        return "pay-success.html"
+    }
+
+    @GetMapping("/pay/fail")
+    suspend fun payFailed(request: ReqPayFailed): String {
+        orderService.authFailed(request)
+        return "pay-fail.html"
+    }
 }
+data class ReqPayFailed(
+    val code: String,
+    val message: String,
+    val orderId: String,
+)
+
+data class ReqPaySucceed(
+    val paymentKey: String,
+    val orderId: String,
+    val amount: Long,
+    val paymentType: TossPaymentType,
+)
+
+enum class TossPaymentType {
+    NORMAL, BRANDPAY, KEYIN
+}
+
