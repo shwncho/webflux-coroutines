@@ -92,7 +92,7 @@ class OrderService(
             order.pgStatus = PgStatus.CAPTURE_SUCCESS
             true
         } catch (e: Exception) {
-            logger.error(e.message, e)
+//            logger.error(e.message,e)
             order.pgStatus = when {
                 e is WebClientRequestException -> PgStatus.CAPTURE_RETRY
                 e is WebClientResponseException -> PgStatus.CAPTURE_FAIL
