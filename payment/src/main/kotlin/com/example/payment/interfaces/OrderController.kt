@@ -1,6 +1,8 @@
 package com.example.payment.interfaces
 
+import com.example.payment.application.OrderHistoryService
 import com.example.payment.application.OrderService
+import com.example.payment.application.QryOrderHistory
 import com.example.payment.application.ReqCreateOrder
 import com.example.payment.common.Beans.Companion.beanProductInOrderRepository
 import com.example.payment.common.Beans.Companion.beanProductService
@@ -19,6 +21,7 @@ import java.time.LocalDateTime
 @RequestMapping("/orders")
 class OrderController(
     private val orderService: OrderService,
+    private val orderHistoryService: OrderHistoryService,
 ) {
 
     @GetMapping("/{id}")
@@ -39,6 +42,11 @@ class OrderController(
     @DeleteMapping("/{id}")
     suspend fun delete(@PathVariable id: Long) {
         orderService.delete(id)
+    }
+
+    @GetMapping("/history")
+    suspend fun getHistories(request: QryOrderHistory): List<Order> {
+        return orderHistoryService.getHistories(request)
     }
 }
 
