@@ -30,12 +30,13 @@ private val logger = KotlinLogging.logger {}
 @ActiveProfiles("test", "toss-pay-test")
 class OrderServiceTest(
     @Autowired orderService: OrderService,
+    @Autowired paymentService: PaymentService,
     @Autowired productRepository: ProductRepository,
     @Autowired productInOrderRepository: ProductInOrderRepository,
     @Autowired tossPayApi: TossPayApi,
 ): StringSpec({
 
-    beforeTest {
+    beforeSpec {
         productRepository.save(Product(1,"apple",1000).apply { new = true })
         productRepository.save(Product(2,"banana",1200).apply { new = true })
         productRepository.save(Product(3,"mango",700).apply { new = true })
@@ -84,7 +85,7 @@ class OrderServiceTest(
         order.pgStatus shouldBe PgStatus.CREATE
 
         val token = ReqPaySucceed("test idempotency key", order.pgOrderId!!, order.amount, TossPaymentType.NORMAL)
-        orderService.authSucceed(token)
+        paymentService.authSucceed(token)
         val orderAuthed = orderService.get(order.id).also { it.pgStatus shouldBe PgStatus.AUTH_SUCCESS}
 
         Mockito.`when`(tossPayApi.confirm(token)).thenReturn(
@@ -97,7 +98,7 @@ class OrderServiceTest(
             )
         )
 
-        orderService.capture(token)
+        paymentService.capture(token)
         orderService.get(order.id).also { it.pgStatus shouldBe PgStatus.CAPTURE_SUCCESS}
 
     }
@@ -107,14 +108,14 @@ class OrderServiceTest(
         order.pgStatus shouldBe PgStatus.CREATE
 
         val token = ReqPaySucceed("test idempotency key", order.pgOrderId!!, order.amount, TossPaymentType.NORMAL)
-        orderService.authSucceed(token)
-        val orderAuthed = orderService.get(order.id).also { it.pgStatus shouldBe PgStatus.AUTH_SUCCESS }
+        paymentService.authSucceed(token)
+        orderService.get(order.id).also { it.pgStatus shouldBe PgStatus.AUTH_SUCCESS }
 
         Mockito.`when`(tossPayApi.confirm(token)).thenThrow(
             WebClientRequestException::class.java
         )
 
-        orderService.capture(token)
+        paymentService.capture(token)
         orderService.get(order.id).also { it.pgStatus shouldBe PgStatus.CAPTURE_RETRY }
 
     }
@@ -125,14 +126,14 @@ class OrderServiceTest(
         order.pgStatus shouldBe PgStatus.CREATE
 
         val token = ReqPaySucceed("test idempotency key", order.pgOrderId!!, order.amount, TossPaymentType.NORMAL)
-        orderService.authSucceed(token)
-        val orderAuthed = orderService.get(order.id).also { it.pgStatus shouldBe PgStatus.AUTH_SUCCESS }
+        paymentService.authSucceed(token)
+        orderService.get(order.id).also { it.pgStatus shouldBe PgStatus.AUTH_SUCCESS }
 
         Mockito.`when`(tossPayApi.confirm(token)).thenThrow(
             WebClientResponseException::class.java
         )
 
-        orderService.capture(token)
+        paymentService.capture(token)
         orderService.get(order.id).also { it.pgStatus shouldBe PgStatus.CAPTURE_FAIL }
 
     }

@@ -18,6 +18,11 @@ class OrderHistoryServiceTest(
     @Autowired private val orderHistoryService: OrderHistoryService,
     @Autowired private val orderRepository: OrderRepository,
 ): StringSpec({
+
+    afterTest {
+        orderRepository.deleteAll()
+    }
+
     "filter valid status" {
         listOf(
             Order(userId = 11, description = "a", amount = 1000, pgStatus = CREATE),

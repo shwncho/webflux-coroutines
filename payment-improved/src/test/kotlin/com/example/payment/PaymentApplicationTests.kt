@@ -28,17 +28,20 @@ class PaymentApplicationTests(
 		prodRepository.save(Product(1,"a",1000).apply { new = true })
 		val currCnt = prodRepository.count()
 		currCnt shouldBe prevCnt + 1
+		prodRepository.deleteAll()
 	}
 	"order" {
 		val prevCnt = orderRepository.count()
 		orderRepository.save(Order(userId = 1)).also { logger.debug { it } }
 		val currCnt = orderRepository.count()
 		currCnt shouldBe prevCnt + 1
+		orderRepository.deleteAll()
 	}
 	"prod in order" {
 		val prevCnt = prodInOrderRepository.count()
 		prodInOrderRepository.save(ProductInOrder(1,1,1,1)).also { logger.debug { it } }
 		val currCnt = prodInOrderRepository.count()
 		currCnt shouldBe prevCnt + 1
+		prodInOrderRepository.deleteAll()
 	}
 })
