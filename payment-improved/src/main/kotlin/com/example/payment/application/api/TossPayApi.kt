@@ -1,4 +1,4 @@
-package com.example.payment.application
+package com.example.payment.application.api
 
 import com.example.payment.interfaces.ReqPaySucceed
 import io.netty.handler.ssl.SslContextBuilder

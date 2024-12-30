@@ -1,6 +1,6 @@
 package com.example.payment.application
 
-import com.example.payment.common.Beans.Companion.beanOrderService
+import com.example.payment.application.api.TossPayApi
 import com.example.payment.domain.Order
 import com.example.payment.domain.PgStatus
 import com.example.payment.domain.ProductInOrder
@@ -8,14 +8,10 @@ import com.example.payment.exception.NoOrderFound
 import com.example.payment.exception.NoProductFound
 import com.example.payment.infrastructure.OrderRepository
 import com.example.payment.infrastructure.ProductInOrderRepository
-import com.example.payment.interfaces.ReqPayFailed
-import com.example.payment.interfaces.ReqPaySucceed
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.reactive.function.client.WebClientRequestException
-import org.springframework.web.reactive.function.client.WebClientResponseException
 import java.util.*
 
 private val logger = KotlinLogging.logger {}

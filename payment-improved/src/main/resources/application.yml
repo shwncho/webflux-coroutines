@@ -38,6 +38,8 @@ logging:
     console: "%d{HH:mm:ss.SSS}|%highlight(%-5level)|%X{txid:-}|%green(%t)|%blue(\\(%F:%L\\))|%msg%n"
 
 payment:
+  self:
+    domain: http://localhost:8080
   toss:
     domain: https://api.tosspayments.com
     key:

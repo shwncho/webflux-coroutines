@@ -1,5 +1,7 @@
 package com.example.payment.application
 
+import com.example.payment.application.api.ResConfirm
+import com.example.payment.application.api.TossPayApi
 import com.example.payment.domain.PgStatus
 import com.example.payment.exception.NoProductFound
 import com.example.payment.domain.Product
@@ -14,7 +16,6 @@ import io.kotest.matchers.shouldNotBe
 import mu.KotlinLogging
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

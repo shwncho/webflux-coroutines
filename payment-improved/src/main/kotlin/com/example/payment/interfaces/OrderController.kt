@@ -2,26 +2,33 @@ package com.example.payment.interfaces
 
 import com.example.payment.application.OrderHistoryService
 import com.example.payment.application.OrderService
+import com.example.payment.application.PaymentService
 import com.example.payment.application.QryOrderHistory
 import com.example.payment.application.ReqCreateOrder
 import com.example.payment.common.Beans.Companion.beanProductInOrderRepository
 import com.example.payment.common.Beans.Companion.beanProductService
 import com.example.payment.domain.Order
 import com.example.payment.domain.PgStatus
+import kotlinx.coroutines.delay
+import mu.KotlinLogging
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDateTime
+
+private val logger = KotlinLogging.logger {}
 
 @RestController
 @RequestMapping("/orders")
 class OrderController(
     private val orderService: OrderService,
     private val orderHistoryService: OrderHistoryService,
+    private val paymentService: PaymentService,
 ) {
 
     @GetMapping("/{id}")
@@ -47,6 +54,15 @@ class OrderController(
     @GetMapping("/history")
     suspend fun getHistories(request: QryOrderHistory): List<Order> {
         return orderHistoryService.getHistories(request)
+    }
+
+    @PutMapping("/recapture/{id}")
+    suspend fun recapture(@PathVariable id: Long) {
+        orderService.get(id)?.let { order ->
+            logger.debug { ">> recapture: $order" }
+            delay(1000)
+            paymentService.capture(order)
+        }
     }
 }
 

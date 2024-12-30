@@ -3,6 +3,7 @@ package com.example.payment.domain
 import au.com.console.kassava.kotlinEquals
 import au.com.console.kassava.kotlinHashCode
 import au.com.console.kassava.kotlinToString
+import com.example.payment.domain.PgStatus.CAPTURE_RETRY
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 
@@ -34,4 +35,9 @@ class Order(
         Order::pgStatus,
         Order::pgRetryCount,
     ), superToString = { super.toString() })
+
+    fun increaseRetryCount() {
+        if(pgStatus == CAPTURE_RETRY)
+            pgRetryCount++
+    }
 }
