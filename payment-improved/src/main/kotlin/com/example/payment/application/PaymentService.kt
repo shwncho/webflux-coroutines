@@ -72,16 +72,14 @@ class PaymentService(
 
     //요청받은 결제에 대해 그 뒤 로직을 담당하는 캡쳐부분
     @Transactional
-    suspend fun capture(order: Order): Boolean {
+    suspend fun capture(order: Order) {
         logger.debug { ">> order: $order" }
         if(order.pgStatus !in setOf(CAPTURE_REQUEST, CAPTURE_RETRY))
             throw InvalidOrderStatus("invalid order status (orderId: ${order.id}, status: ${order.pgStatus}")
         order.increaseRetryCount()
-
-        return try {
+        try {
             tossPayApi.confirm(order.toReqPaySucceed()).also { logger.debug { ">> res: $it" } }
             order.pgStatus = CAPTURE_SUCCESS
-            true
         } catch (e: Exception) {
 //            logger.error(e.message,e)
             order.pgStatus = when (e) {
@@ -98,7 +96,10 @@ class PaymentService(
                 }
                 else -> CAPTURE_FAIL
             }
-            false
+            if(order.pgStatus == CAPTURE_RETRY && order.pgRetryCount >= 3) {
+                order.pgStatus == CAPTURE_FAIL
+            }
+            if(order.pgStatus == CAPTURE_SUCCESS) throw e
         } finally {
             orderService.save(order)
             if(order.pgStatus == CAPTURE_RETRY) {
