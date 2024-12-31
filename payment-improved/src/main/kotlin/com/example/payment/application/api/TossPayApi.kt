@@ -1,6 +1,7 @@
 package com.example.payment.application.api
 
 import com.example.payment.interfaces.ReqPaySucceed
+import io.netty.channel.ChannelOption
 import io.netty.handler.ssl.SslContextBuilder
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -31,7 +32,11 @@ class TossPayApi(
             .maxConnections(10)
             .pendingAcquireTimeout(Duration.ofSeconds(10))
             .build()
-        val connector = ReactorClientHttpConnector(HttpClient.create(provider).secure{ it.sslContext((insecureSslContext))})
+        val connector = ReactorClientHttpConnector(
+            HttpClient.create(provider)
+                .secure{ it.sslContext((insecureSslContext))}
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1000)
+        )
         return WebClient.builder().baseUrl(domain)
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .clientConnector(connector)

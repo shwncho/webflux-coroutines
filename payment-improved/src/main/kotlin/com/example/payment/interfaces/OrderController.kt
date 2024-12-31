@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDateTime
+import kotlin.math.pow
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 private val logger = KotlinLogging.logger {}
 
@@ -60,9 +63,17 @@ class OrderController(
     suspend fun recapture(@PathVariable id: Long) {
         orderService.get(id)?.let { order ->
             logger.debug { ">> recapture: $order" }
-            delay(1000)
+            delay(getBackOffDelay(order).also { logger.debug { ">> delay: $it ms" } })
+            // temp = 2 ^ retry count
+            // delay = (temp / 2) * (0..(temp/2)).random
             paymentService.capture(order)
         }
+    }
+
+    private fun getBackOffDelay(order: Order): Duration {
+        val temp = (2.0).pow(order.pgRetryCount).toInt() * 1000
+        val delay = temp + (0..temp).random()
+        return delay.milliseconds
     }
 }
 
