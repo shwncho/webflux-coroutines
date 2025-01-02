@@ -1,5 +1,6 @@
 package com.example.payment.interfaces
 
+import com.example.payment.application.CaptureMarker
 import com.example.payment.application.OrderHistoryService
 import com.example.payment.application.OrderService
 import com.example.payment.application.PaymentService
@@ -32,6 +33,7 @@ class OrderController(
     private val orderService: OrderService,
     private val orderHistoryService: OrderHistoryService,
     private val paymentService: PaymentService,
+    private val captureMarker: CaptureMarker,
 ) {
 
     @GetMapping("/{id}")
@@ -74,6 +76,11 @@ class OrderController(
         val temp = (2.0).pow(order.pgRetryCount).toInt() * 1000
         val delay = temp + (0..temp).random()
         return delay.milliseconds
+    }
+
+    @GetMapping("/capturing")
+    suspend fun getCapturingOrder(): List<Order> {
+        return captureMarker.getAll()
     }
 }
 

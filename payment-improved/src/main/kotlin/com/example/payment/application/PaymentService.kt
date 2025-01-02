@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException
+import java.time.Duration
+import java.time.LocalDateTime
 
 private val logger = KotlinLogging.logger {}
 
@@ -24,6 +26,7 @@ class PaymentService(
     private val tossPayApi: TossPayApi,
     private val objectMapper: ObjectMapper,
     private val paymentApi: PaymentApi,
+    private val captureMarker: CaptureMarker,
 ) {
 
     @Transactional
@@ -77,6 +80,9 @@ class PaymentService(
         if(order.pgStatus !in setOf(CAPTURE_REQUEST, CAPTURE_RETRY))
             throw InvalidOrderStatus("invalid order status (orderId: ${order.id}, status: ${order.pgStatus}")
         order.increaseRetryCount()
+
+        captureMarker.put(order.id)
+
         try {
             tossPayApi.confirm(order.toReqPaySucceed()).also { logger.debug { ">> res: $it" } }
             order.pgStatus = CAPTURE_SUCCESS
@@ -102,10 +108,21 @@ class PaymentService(
             if(order.pgStatus == CAPTURE_SUCCESS) throw e
         } finally {
             orderService.save(order)
+            captureMarker.remove(order.id)
             if(order.pgStatus == CAPTURE_RETRY) {
                 paymentApi.recapture(order.id)
             }
         }
+    }
+
+    suspend fun recaptureOnBoot() {
+        val now = LocalDateTime.now()
+        captureMarker.getAll()
+            .filter { Duration.between(it.updatedAt!!,now).seconds >= 60 }
+            .forEach { order ->
+                captureMarker.remove(order.id)
+                paymentApi.recapture(order.id)
+            }
     }
 
     private fun Order.toReqPaySucceed(): ReqPaySucceed {
