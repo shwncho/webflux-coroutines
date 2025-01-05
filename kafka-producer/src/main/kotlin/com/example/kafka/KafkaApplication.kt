@@ -13,7 +13,7 @@ class KafkaApplication(
 	private val producer: TestProducer,
 ) : ApplicationRunner {
 	override fun run(args: ApplicationArguments?) {
-		repeat(10) { i ->
+		repeat(2) { i ->
 			producer.send("test", "test message")
 		}
 	}
