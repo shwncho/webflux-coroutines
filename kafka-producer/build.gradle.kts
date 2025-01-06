@@ -19,6 +19,11 @@ repositories {
 }
 
 dependencies {
+
+	implementation("io.github.microutils:kotlin-logging:3.0.5")
+	implementation("io.projectreactor.kafka:reactor-kafka:1.3.21")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+
 	implementation("org.springframework.boot:spring-boot-starter")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.springframework.kafka:spring-kafka")

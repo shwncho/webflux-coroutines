@@ -1,6 +1,7 @@
 package com.example.kafka
 
 import com.example.kafka.produce.TestProducer
+import kotlinx.coroutines.runBlocking
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -13,8 +14,10 @@ class KafkaApplication(
 	private val producer: TestProducer,
 ) : ApplicationRunner {
 	override fun run(args: ApplicationArguments?) {
-		repeat(2) { i ->
-			producer.send("test", "test message")
+		runBlocking {
+			repeat(1) { i ->
+				producer.send("test", "test message")
+			}
 		}
 	}
 }
