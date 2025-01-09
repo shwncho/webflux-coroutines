@@ -2,7 +2,10 @@ package com.example.elasticsearch.interfaces
 
 import com.example.elasticsearch.domain.History
 import com.example.elasticsearch.domain.PgStatus
+import com.example.elasticsearch.infrastructure.HistoryNativeRepository
 import com.example.elasticsearch.infrastructure.HistoryRepository
+import com.example.elasticsearch.infrastructure.QrySearch
+import com.example.elasticsearch.infrastructure.ResSearch
 import kotlinx.coroutines.flow.Flow
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,6 +20,7 @@ import java.time.LocalDateTime
 @RequestMapping("/history")
 class HistoryController (
     private val repository: HistoryRepository,
+    private val nativeRepository: HistoryNativeRepository,
 ) {
 
     @GetMapping("/{orderId}")
@@ -50,6 +54,11 @@ class HistoryController (
     @DeleteMapping("/all")
     suspend fun deleteAll() {
         repository.deleteAll()
+    }
+
+    @GetMapping("/search")
+    suspend fun search(request: QrySearch): ResSearch {
+        return nativeRepository.search(request)
     }
 
 }
