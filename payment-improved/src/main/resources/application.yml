@@ -17,6 +17,8 @@ spring:
     redis:
       host: localhost
       port: 6379
+  kafka:
+    bootstrap-servers: localhost:9092
   thymeleaf:
     cache: off
 

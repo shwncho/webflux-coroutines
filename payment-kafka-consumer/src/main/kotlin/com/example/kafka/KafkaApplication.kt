@@ -14,14 +14,7 @@ private val logger = KotlinLogging.logger {}
 @EnableKafka
 class KafkaApplication(
 	private val consumer: Consumer,
-): ApplicationRunner {
-	override fun run(args: ApplicationArguments?) {
-		consumer.consume("test", "A") {
-			logger.debug { ">> Received message: $it" }
-		}
-		logger.debug { ">> ready consumer" }
-	}
-}
+)
 
 fun main(args: Array<String>) {
 	runApplication<KafkaApplication>(*args)

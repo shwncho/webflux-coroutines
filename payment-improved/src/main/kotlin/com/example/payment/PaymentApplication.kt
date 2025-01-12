@@ -7,9 +7,11 @@ import org.springframework.boot.ApplicationRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.data.r2dbc.config.EnableR2dbcAuditing
+import org.springframework.kafka.annotation.EnableKafka
 
 @SpringBootApplication
 @EnableR2dbcAuditing
+@EnableKafka
 class PaymentApplication(
 	private val paymentService: PaymentService,
 ): ApplicationRunner {

@@ -3,6 +3,7 @@ package com.example.payment.application
 import com.example.payment.application.api.PaymentApi
 import com.example.payment.application.api.TossPayApi
 import com.example.payment.common.Beans
+import com.example.payment.common.KafkaProducer
 import com.example.payment.domain.Order
 import com.example.payment.domain.PgStatus.*
 import com.example.payment.exception.InvalidOrderStatus
@@ -27,6 +28,7 @@ class PaymentService(
     private val objectMapper: ObjectMapper,
     private val paymentApi: PaymentApi,
     private val captureMarker: CaptureMarker,
+    private val kafkaPipeline: KafkaPipeline,
 ) {
 
     @Transactional
@@ -112,6 +114,7 @@ class PaymentService(
             if(order.pgStatus == CAPTURE_RETRY) {
                 paymentApi.recapture(order.id)
             }
+            kafkaPipeline.sendPayment(order)
         }
     }
 
