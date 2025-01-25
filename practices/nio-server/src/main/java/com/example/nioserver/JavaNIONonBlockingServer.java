@@ -18,25 +18,32 @@ public class JavaNIONonBlockingServer {
             serverSocket.bind(new InetSocketAddress("localhost", 8080));
             serverSocket.configureBlocking(false);
 
-            while(true) {
+            while (true) {
                 SocketChannel clientSocket = serverSocket.accept();
                 if (clientSocket == null) {
                     Thread.sleep(100);
                     continue;
                 }
 
-                ByteBuffer requestByBuffer = ByteBuffer.allocateDirect(1024);
-                while (clientSocket.read(requestByBuffer)==0) {
-                    log.info("wait Reading");
-                }
-                requestByBuffer.flip();
-                String requestBody = StandardCharsets.UTF_8.decode(requestByBuffer).toString();
-                log.info("request: {}", requestBody);
-
-                ByteBuffer responseByteBuffer = ByteBuffer.wrap("This is server".getBytes());
-                clientSocket.write(responseByteBuffer);
-                clientSocket.close();
+                handleRequest(clientSocket);
             }
         }
+    }
+
+    @SneakyThrows
+    private static void handleRequest(SocketChannel clientSocket) {
+        ByteBuffer requestByteBuffer = ByteBuffer.allocateDirect(1024);
+        while (clientSocket.read(requestByteBuffer) == 0) {
+            log.info("Reading...");
+        }
+        requestByteBuffer.flip();
+        String requestBody = StandardCharsets.UTF_8.decode(requestByteBuffer).toString();
+        log.info("request: {}", requestBody);
+
+        Thread.sleep(10);
+
+        ByteBuffer responeByteBuffer = ByteBuffer.wrap("This is server".getBytes());
+        clientSocket.write(responeByteBuffer);
+        clientSocket.close();
     }
 }
