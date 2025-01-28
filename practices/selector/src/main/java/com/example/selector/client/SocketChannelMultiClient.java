@@ -24,7 +24,7 @@ public class SocketChannelMultiClient {
 
         var counter = new AtomicInteger(0);
 
-        for (var i = 0; i < 1000; i++) {
+        for (var i = 0; i < 5000; i++) {
             var future = CompletableFuture.runAsync(() -> {
                 try {
                     try (var socketChannel = SocketChannel.open()) {
