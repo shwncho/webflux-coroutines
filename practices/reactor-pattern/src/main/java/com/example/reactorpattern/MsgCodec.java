@@ -20,7 +20,7 @@ class MsgCodec {
 
     /**
      * GET / HTTP/1.1
-     * taewoo
+     * test
      * Host: localhost:8080
      * Connection: Keep-Alive
      * User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.6)
