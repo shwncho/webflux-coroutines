@@ -1,4 +1,6 @@
 package com.example.netty;
 
-public class NettyEchoServerHandler {
+import io.netty.channel.ChannelInboundHandlerAdapter;
+
+public class NettyEchoServerHandler extends ChannelInboundHandlerAdapter {
 }
