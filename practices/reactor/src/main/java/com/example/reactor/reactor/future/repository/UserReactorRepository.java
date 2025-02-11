@@ -3,6 +3,7 @@ package com.example.reactor.reactor.future.repository;
 import com.example.reactor.common.repository.UserEntity;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 import java.util.Map;
 import java.util.Optional;
@@ -19,8 +20,8 @@ public class UserReactorRepository {
     }
 
     @SneakyThrows
-    public CompletableFuture<Optional<UserEntity>> findById(String userId) {
-        return CompletableFuture.supplyAsync(() -> {
+    public Mono<UserEntity> findById(String userId) {
+        return Mono.create(sink -> {
             log.info("UserRepository.findById: {}", userId);
             try {
                 Thread.sleep(1000);
@@ -28,7 +29,8 @@ public class UserReactorRepository {
                 throw new RuntimeException(e);
             }
             var user = userMap.get(userId);
-            return Optional.ofNullable(user);
+            if(user == null)    sink.success();
+            else    sink.success(user);
         });
     }
 }

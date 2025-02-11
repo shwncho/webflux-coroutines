@@ -11,6 +11,7 @@ import com.example.reactor.reactor.future.repository.UserReactorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -25,9 +26,11 @@ public class UserReactorService {
     private final FollowReactorRepository followRepository;
 
     @SneakyThrows
-    public CompletableFuture<Optional<User>> getUserById(String id) {
+    public Mono<User> getUserById(String id) {
         return userRepository.findById(id)
-                .thenComposeAsync(this::getUser);
+                .flatMap(userEntity -> {
+                    return Mono.fromFuture(this.getUser(Optional.of(userEntity)));
+                }).map(Optional::get);
     }
 
     @SneakyThrows
