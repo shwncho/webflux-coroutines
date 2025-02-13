@@ -29,17 +29,12 @@ public class UserReactorService {
     public Mono<User> getUserById(String id) {
         return userRepository.findById(id)
                 .flatMap(userEntity -> {
-                    return Mono.fromFuture(this.getUser(Optional.of(userEntity)));
+                    return Mono.fromFuture(this.getUser(userEntity));
                 }).map(Optional::get);
     }
 
     @SneakyThrows
-    private CompletableFuture<Optional<User>> getUser(Optional<UserEntity> userEntityOptional) {
-        if(userEntityOptional.isEmpty())    
-            return CompletableFuture.completedFuture(Optional.empty());
-
-        var userEntity = userEntityOptional.get();
-
+    private CompletableFuture<Optional<User>> getUser(UserEntity userEntity) {
         var imageFuture = imageRepository.findById(userEntity.getProfileImageId())
                 .thenApplyAsync(imageEntityOptional ->
                         imageEntityOptional.map(imageEntity ->
