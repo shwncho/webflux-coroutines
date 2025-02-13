@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceReactorTest {
 
@@ -44,6 +44,31 @@ public class UserServiceReactorTest {
 
         // then
         assertTrue(user.isEmpty());
+    }
+
+    @Test
+    void testGetUser() throws ExecutionException, InterruptedException {
+        // given
+        String userId = "1234";
+
+        // when
+        Optional<User> optionalUser = userService.getUserById(userId).blockOptional();
+
+        // then
+        assertFalse(optionalUser.isEmpty());
+        var user = optionalUser.get();
+        assertEquals(user.getName(), "taewoo");
+        assertEquals(user.getAge(), 32);
+
+        assertFalse(user.getProfileImage().isEmpty());
+        var image = user.getProfileImage().get();
+        assertEquals(image.getId(), "image#1000");
+        assertEquals(image.getName(), "profileImage");
+        assertEquals(image.getUrl(), "https://dailyone.com/images/1000");
+
+        assertEquals(2, user.getArticleList().size());
+
+        assertEquals(1000, user.getFollowCount());
     }
 
 }
