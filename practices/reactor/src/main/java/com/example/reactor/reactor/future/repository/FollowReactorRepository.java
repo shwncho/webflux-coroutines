@@ -2,9 +2,9 @@ package com.example.reactor.reactor.future.repository;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 public class FollowReactorRepository {
@@ -15,15 +15,15 @@ public class FollowReactorRepository {
     }
 
     @SneakyThrows
-    public CompletableFuture<Long> countByUserId(String userId) {
-        return CompletableFuture.supplyAsync(() -> {
+    public Mono<Long> countByUserId(String userId) {
+        return Mono.create(sink -> {
             log.info("FollowRepository.countByUserId: {}", userId);
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            return userFollowCountMap.getOrDefault(userId, 0L);
+            sink.success(userFollowCountMap.getOrDefault(userId, 0L));
         });
     }
 }

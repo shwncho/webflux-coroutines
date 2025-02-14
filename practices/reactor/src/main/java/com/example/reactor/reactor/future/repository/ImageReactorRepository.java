@@ -3,10 +3,9 @@ package com.example.reactor.reactor.future.repository;
 import com.example.reactor.common.repository.ImageEntity;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 public class ImageReactorRepository {
@@ -19,15 +18,21 @@ public class ImageReactorRepository {
     }
 
     @SneakyThrows
-    public CompletableFuture<Optional<ImageEntity>> findById(String id) {
-        return CompletableFuture.supplyAsync(() -> {
+    public Mono<ImageEntity> findById(String id) {
+        return Mono.create(sink -> {
             log.info("ImageRepository.findById: {}", id);
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            return Optional.ofNullable(imageMap.get(id));
+
+            var image = imageMap.get(id);
+            if(image == null) {
+                sink.error(new RuntimeException("image not found"));
+            } else {
+                sink.success(image);
+            }
         });
     }
 }
