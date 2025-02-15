@@ -1,11 +1,13 @@
 package com.example.reactor.reactor.future.repository;
 
 import com.example.reactor.common.repository.ImageEntity;
+import com.example.reactor.common.repository.UserEntity;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 public class ImageReactorRepository {
@@ -34,5 +36,14 @@ public class ImageReactorRepository {
                 sink.success(image);
             }
         });
+    }
+
+    public Mono<ImageEntity> findWithContext() {
+        return Mono.deferContextual(context -> {
+            Optional<UserEntity> userOptional = context.getOrEmpty("user");
+            if(userOptional.isEmpty()) throw new RuntimeException("user not found");
+
+            return Mono.just(userOptional.get().getProfileImageId());
+        }).flatMap(this::findById);
     }
 }

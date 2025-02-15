@@ -1,10 +1,12 @@
 package com.example.reactor.reactor.future.repository;
 
+import com.example.reactor.common.repository.UserEntity;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 public class FollowReactorRepository {
@@ -25,5 +27,14 @@ public class FollowReactorRepository {
             }
             sink.success(userFollowCountMap.getOrDefault(userId, 0L));
         });
+    }
+
+    public Mono<Long> countWithContext() {
+        return Mono.deferContextual(context -> {
+            Optional<UserEntity> userOptional = context.getOrEmpty("user");
+            if(userOptional.isEmpty()) throw new RuntimeException("user not found");
+
+            return Mono.just(userOptional.get().getId());
+        }).flatMap(this::countByUserId);
     }
 }

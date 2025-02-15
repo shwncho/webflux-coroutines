@@ -1,11 +1,14 @@
 package com.example.reactor.reactor.future.repository;
 
 import com.example.reactor.common.repository.ArticleEntity;
+import com.example.reactor.common.repository.UserEntity;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 public class ArticleReactorRepository {
@@ -41,5 +44,17 @@ public class ArticleReactorRepository {
                     .forEach(sink::next);
             sink.complete();
         });
+    }
+
+    public Flux<ArticleEntity> findAllWithContext() {
+        return Flux.deferContextual(contextView -> {
+            Optional<UserEntity> userOptional = contextView.getOrEmpty("user");
+
+            if(userOptional.isEmpty()) {
+                throw new RuntimeException("user not found");
+            }
+
+            return Mono.just(userOptional.get().getId());
+        }).flatMap(this::findAllByUserId);
     }
 }

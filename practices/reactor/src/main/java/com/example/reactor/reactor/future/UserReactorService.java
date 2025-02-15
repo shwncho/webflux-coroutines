@@ -13,11 +13,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
+import reactor.util.context.Context;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,19 +34,25 @@ public class UserReactorService {
 
     @SneakyThrows
     private Mono<User> getUser(UserEntity userEntity) {
-        var imageMono = imageRepository.findById(userEntity.getProfileImageId())
+        Context context = Context.of("user", userEntity);
+        var imageMono = imageRepository.findWithContext()
                 .map(imageEntity ->
                         new Image(imageEntity.getId(), imageEntity.getName(), imageEntity.getUrl())
-                ).onErrorReturn(new EmptyImage());
+                ).onErrorReturn(new EmptyImage())
+                .contextWrite(context);
 
-        var articlesMono = articleRepository.findAllByUserId(userEntity.getId())
+
+        var articlesMono = articleRepository.findAllWithContext()
                 .skip(5)
                 .take(2)
                 .map(articleEntity ->
                             new Article(articleEntity.getId(), articleEntity.getTitle(), articleEntity.getContent())
-                ).collectList();
+                ).collectList().doOnSubscribe(subscription -> {
+                    log.info("subscribe articleRepository");
+                }).contextWrite(context);
 
-        var followCountMono = followRepository.countByUserId(userEntity.getId());
+        var followCountMono = followRepository.countWithContext()
+                .contextWrite(context);
 
 
         return Mono.zip(imageMono, articlesMono, followCountMono)
