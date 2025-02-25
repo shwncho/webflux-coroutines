@@ -1,4 +1,4 @@
-package com.example.springwebflux;
+package com.example.springwebflux.annotated;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
