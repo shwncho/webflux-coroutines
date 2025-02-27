@@ -25,6 +25,10 @@ dependencies {
 
     // reactor tool
     implementation("io.projectreactor:reactor-tools")
+
+    // lombok
+    annotationProcessor("org.projectlombok:lombok")
+    compileOnly("org.projectlombok:lombok")
 }
 
 tasks.withType<Test> {

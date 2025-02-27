@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class WebfluxImageApplication {
+public class ImageApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(WebfluxImageApplication.class, args);
+        SpringApplication.run(ImageApplication.class, args);
     }
 
 }
