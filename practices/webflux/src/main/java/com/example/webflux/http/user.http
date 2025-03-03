@@ -15,7 +15,7 @@ X-I-AM: abcd
         client.assert(response.status === 200);
 
         client.assert(response.body.id === '1234');
-        client.assert(response.body.name === 'taewoo');
-        client.assert(response.body.age === 32);
+        client.assert(response.body.name === 'simple');
+        client.assert(response.body.age === 29);
     });
 %}
