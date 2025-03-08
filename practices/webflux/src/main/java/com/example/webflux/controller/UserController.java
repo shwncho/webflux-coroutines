@@ -1,5 +1,6 @@
 package com.example.webflux.controller;
 
+import com.example.webflux.controller.dto.ProfileImageResponse;
 import com.example.webflux.controller.dto.UserResponse;
 import com.example.webflux.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,13 @@ public class UserController {
                                                     user.getId(),
                                                     user.getName(),
                                                     user.getAge(),
-                                                    user.getFollowCount()
+                                                    user.getFollowCount(),
+                                                    user.getProfileImage().map(image ->
+                                                            new ProfileImageResponse(
+                                                                    image.getId(),
+                                                                    image.getName(),
+                                                                    image.getUrl()
+                                                            ))
                                             )
                                     ).switchIfEmpty(
                                             Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND))
