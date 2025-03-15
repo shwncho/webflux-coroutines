@@ -1,5 +1,6 @@
 package com.example.websocket.config;
 
+import com.example.websocket.handler.ChatWebSocketHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
@@ -11,8 +12,10 @@ import java.util.Map;
 public class MappingConfig {
 
     @Bean
-    SimpleUrlHandlerMapping simpleUrlHandlerMapping() {
-        Map<String, WebSocketHandler> map = Map.of();
+    SimpleUrlHandlerMapping simpleUrlHandlerMapping(ChatWebSocketHandler chatWebSocketHandler) {
+        Map<String, WebSocketHandler> map = Map.of(
+                "/chat", chatWebSocketHandler
+        );
 
         SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
         mapping.setOrder(1);
