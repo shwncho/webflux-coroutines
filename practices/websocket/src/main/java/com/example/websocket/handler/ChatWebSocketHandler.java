@@ -1,6 +1,7 @@
 package com.example.websocket.handler;
 
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.WebSocketMessage;
@@ -13,24 +14,18 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
+@RequiredArgsConstructor
 @Component
 public class ChatWebSocketHandler implements WebSocketHandler {
-    @Data
-    private static class Chat {
-        private final String message;
-        private final String from;
-    }
-
-    private static Map<String, Sinks.Many<Chat>> chatSinkMap =
-            new ConcurrentHashMap<>();
+    private final ChatService chatService;
 
     @Override
     public Mono<Void> handle(WebSocketSession session) {
         String iam = (String) session.getAttributes().get("iam");
-        Sinks.Many<Chat> sink = Sinks.many().unicast().onBackpressureBuffer();
 
-        chatSinkMap.put(iam, sink);
-        sink.tryEmitNext(new Chat(iam + "님 채팅방에 오신 것을 환영합니다.", "system"));
+        Flux<Chat> chatFlux = chatService.register(iam);
+        chatService.sendChat(iam,
+                new Chat(iam + "님 채팅방에 오신 것을 환영합니다","system"));
 
         session.receive()
                 .doOnNext(webSocketMessage -> {
@@ -40,18 +35,14 @@ public class ChatWebSocketHandler implements WebSocketHandler {
                     String to = splits[0].trim();
                     String message = splits[1].trim();
 
-                    Sinks.Many<Chat> targetSink = chatSinkMap.get(to);
-                    if(targetSink != null) {
-                        if(targetSink.currentSubscriberCount() > 0) {
-                            targetSink.tryEmitNext(new Chat(message, iam));
-                        }
-                    } else {
-                        sink.tryEmitNext(new Chat("존재하지 않는 대화 상대 입니다.", "system"));
+                    boolean result = chatService.sendChat(to, new Chat(message, iam));
+                    if(!result) {
+                        chatService.sendChat(iam, new Chat("존재하지 않는 대화 상대 입니다.", "system"));
                     }
                 }).subscribe();
 
-        return session.send(sink.asFlux()
-                .map(chat -> session.textMessage(chat.from + ": " + chat.message))
+        return session.send(chatFlux
+                .map(chat -> session.textMessage(chat.getFrom() + ": " + chat.getMessage()))
         );
     }
 }
