@@ -11,7 +11,8 @@ public class SimpleUrlHandlerMappingConfig {
     @Bean
     public SimpleUrlHandlerMapping simpleUrlHandlerMapping() {
         Map<String, Object> urlMap = Map.of(
-                "/echo", new EchoWebSocketHandler()
+                "/echo", new EchoWebSocketHandler(),
+                "ws", new GreetWebSocketHandler()
         );
         SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
         mapping.setOrder(1);

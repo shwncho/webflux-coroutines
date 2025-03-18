@@ -1,2 +1,2 @@
-WEBSOCKET ws://localhost:8080/echo
+WEBSOCKET ws://localhost:8080/ws
 Content-Type: application/json
