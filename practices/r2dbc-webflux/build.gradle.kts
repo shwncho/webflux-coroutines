@@ -22,9 +22,17 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
     implementation("org.springframework.boot:spring-boot-starter-mustache")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("io.projectreactor:reactor-test")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    implementation("org.springframework.security:spring-security-core")
+
+    // reactor tool
+    implementation("io.projectreactor:reactor-tools")
+
+    // r2dbc
+    implementation("io.asyncer:r2dbc-mysql:0.9.2")
+
+    // rxjava
+    implementation("io.reactivex.rxjava3:rxjava")
 }
 
 tasks.withType<Test> {
