@@ -33,6 +33,10 @@ dependencies {
 
     // rxjava
     implementation("io.reactivex.rxjava3:rxjava")
+
+    // lombok
+    annotationProcessor("org.projectlombok:lombok")
+    compileOnly("org.projectlombok:lombok")
 }
 
 tasks.withType<Test> {

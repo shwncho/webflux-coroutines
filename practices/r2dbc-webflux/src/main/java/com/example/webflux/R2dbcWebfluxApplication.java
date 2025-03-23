@@ -1,4 +1,4 @@
-package com.example.r2dbcwebflux;
+package com.example.webflux;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
