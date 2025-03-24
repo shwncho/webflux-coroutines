@@ -12,9 +12,9 @@ public class UserReactorRepository {
     private final Map<String, UserEntity> userMap;
 
     public UserReactorRepository() {
-        var user = new UserEntity("1234", "simple", 29, "1");
+        var user = new UserEntity(1L,"simple", 20, "1", "1234");
 
-        userMap = Map.of("1234", user);
+        userMap = Map.of("1", user);
     }
 
     @SneakyThrows

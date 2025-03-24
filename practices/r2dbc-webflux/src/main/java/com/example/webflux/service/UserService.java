@@ -38,7 +38,7 @@ public class UserService {
                                     if(!(image instanceof EmptyImage)) {
                                         profileImage = Optional.of(image);
                                     }
-                                    return new User(userEntity.getId(),
+                                    return new User(userEntity.getId().toString(),
                                             userEntity.getName(),
                                             userEntity.getAge(),
                                             profileImage,
