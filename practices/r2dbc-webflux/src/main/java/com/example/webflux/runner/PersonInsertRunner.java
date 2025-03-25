@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @RequiredArgsConstructor
-@Component
+//@Component
 public class PersonInsertRunner implements CommandLineRunner {
     private final UserR2dbcRepository userR2dbcRepository;
 

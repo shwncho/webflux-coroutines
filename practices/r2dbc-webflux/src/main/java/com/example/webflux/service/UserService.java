@@ -3,7 +3,8 @@ package com.example.webflux.service;
 import com.example.webflux.common.EmptyImage;
 import com.example.webflux.common.Image;
 import com.example.webflux.common.User;
-import com.example.webflux.repository.UserReactorRepository;
+import com.example.webflux.repository.UserR2dbcRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -13,12 +14,13 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final WebClient webClient = WebClient.create("http://localhost:8081");
-    private final UserReactorRepository userRepository = new UserReactorRepository();
+    private final UserR2dbcRepository userRepository;
 
     public Mono<User> findById(String userId) {
-        return userRepository.findById(userId)
+        return userRepository.findById(new Long(userId))
                 .flatMap(userEntity -> {
                         String imageId = userEntity.getProfileImageId();
 
