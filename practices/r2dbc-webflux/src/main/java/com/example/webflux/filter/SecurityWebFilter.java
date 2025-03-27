@@ -22,6 +22,10 @@ public class SecurityWebFilter implements WebFilter {
         final ServerHttpResponse response = exchange.getResponse();
         String iam = exchange.getRequest().getHeaders().getFirst("X-I-AM");
 
+        if (exchange.getRequest().getURI().getPath().equals("/api/users/signup")) {
+            return chain.filter(exchange);
+        }
+
         if(iam == null) {
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return response.setComplete();

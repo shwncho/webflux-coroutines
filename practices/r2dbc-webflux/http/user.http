@@ -19,3 +19,14 @@ X-I-AM: abcd
         client.assert(response.body.age === 20);
     });
 %}
+
+###
+POST http://localhost:8080/api/users/signup
+Content-Type: application/json
+
+{
+  "name": "cho",
+  "age": 50,
+  "gender": "M",
+  "password": "1234"
+}
