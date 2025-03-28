@@ -3,6 +3,7 @@ package com.example.webflux.service;
 import com.example.webflux.common.EmptyImage;
 import com.example.webflux.common.Image;
 import com.example.webflux.common.User;
+import com.example.webflux.common.repository.UserEntity;
 import com.example.webflux.repository.UserR2dbcRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -49,5 +50,33 @@ public class UserService {
                                 });
                 });
 
+    }
+
+    public Mono<User> createUser(
+        String name, Integer age,
+        String password, String profileImageId
+    ) {
+        var newUser = new UserEntity(
+                name,
+                age,
+                profileImageId,
+                password
+        );
+
+        return userRepository.save(newUser)
+                .map(userEntity ->
+                        map(newUser, Optional.of(new EmptyImage()))
+                );
+    }
+
+    private User map(UserEntity userEntity, Optional<Image> profileImage) {
+        return new User(
+                userEntity.getId().toString(),
+                userEntity.getName(),
+                userEntity.getAge(),
+                profileImage,
+                List.of(),
+                0L
+        );
     }
 }
