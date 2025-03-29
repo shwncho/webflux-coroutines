@@ -31,3 +31,17 @@ Content-Type: application/json
   "password": "1234",
   "profileImageId": "2"
 }
+
+###
+GET http://localhost:8080/api/users/5
+X-I-AM: QREDDA
+
+> {%
+    client.test("Status should be 200", function() {
+        client.assert(response.status === 200);
+
+        client.assert(response.body.id === '5');
+        client.assert(response.body.name === 'cho');
+        client.assert(response.body.age === 50);
+    });
+%}

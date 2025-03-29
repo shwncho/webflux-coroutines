@@ -3,10 +3,13 @@ package com.example.webflux.service;
 import com.example.webflux.common.EmptyImage;
 import com.example.webflux.common.Image;
 import com.example.webflux.common.User;
+import com.example.webflux.common.repository.AuthEntity;
 import com.example.webflux.common.repository.UserEntity;
 import com.example.webflux.repository.UserR2dbcRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -19,6 +22,7 @@ import java.util.Optional;
 public class UserService {
     private final WebClient webClient = WebClient.create("http://localhost:8081");
     private final UserR2dbcRepository userRepository;
+    private final R2dbcEntityTemplate entityTemplate;
 
     public Mono<User> findById(String userId) {
         return userRepository.findById(new Long(userId))
@@ -52,6 +56,7 @@ public class UserService {
 
     }
 
+    @Transactional
     public Mono<User> createUser(
         String name, Integer age,
         String password, String profileImageId
@@ -64,6 +69,13 @@ public class UserService {
         );
 
         return userRepository.save(newUser)
+                .flatMap(userEntity -> {
+                    String token = generateRandomToken();
+                    AuthEntity auth = new AuthEntity(userEntity.getId(), token);
+
+                    return entityTemplate.insert(auth)
+                            .map(authEntity -> userEntity);
+                })
                 .map(userEntity ->
                         map(newUser, Optional.of(new EmptyImage()))
                 );
@@ -78,5 +90,15 @@ public class UserService {
                 List.of(),
                 0L
         );
+    }
+
+    private String generateRandomToken() {
+        StringBuilder token = new StringBuilder();
+        for (int i = 0; i < 6; i++) {
+            char item = (char)('A' + (Math.random() * 26));
+            token.append(item);
+        }
+
+        return token.toString();
     }
 }
