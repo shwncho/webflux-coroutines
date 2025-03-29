@@ -15,7 +15,8 @@ public class ImageReactorRepository {
 
     public ImageReactorRepository() {
         imageMap = Map.of(
-                "1", new ImageEntity("1", "profileImage", "https://dailyone.com/images/1")
+                "1", new ImageEntity("1", "profileImage", "https://dailyone.com/images/1"),
+                "2", new ImageEntity("2", "cho's image", "https://dailyone.com/images/2")
         );
     }
 
