@@ -18,8 +18,8 @@ public class ChatWebSocketHandler implements WebSocketHandler {
         String iam = (String) session.getAttributes().get("iam");
 
         Flux<Chat> chatFlux = chatService.register(iam);
-        chatService.sendChat(iam,
-                new Chat(iam + "님 채팅방에 오신 것을 환영합니다","system"));
+        chatService.sendChat("system", iam,
+                iam + "님 채팅방에 오신 것을 환영합니다");
 
         session.receive()
                 .doOnNext(webSocketMessage -> {
@@ -29,10 +29,7 @@ public class ChatWebSocketHandler implements WebSocketHandler {
                     String to = splits[0].trim();
                     String message = splits[1].trim();
 
-                    boolean result = chatService.sendChat(to, new Chat(message, iam));
-                    if(!result) {
-                        chatService.sendChat(iam, new Chat("존재하지 않는 대화 상대 입니다.", "system"));
-                    }
+                    chatService.sendChat(iam, to, message);
                 }).subscribe();
 
         return session.send(chatFlux
