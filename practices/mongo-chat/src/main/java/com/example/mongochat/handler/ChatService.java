@@ -2,8 +2,11 @@ package com.example.mongochat.handler;
 
 import com.example.mongochat.entity.ChatDocument;
 import com.example.mongochat.repository.ChatMongoRepository;
+import com.mongodb.client.model.changestream.OperationType;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
@@ -16,9 +19,32 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class ChatService {
     private final ChatMongoRepository chatMongoRepository;
+    private ReactiveMongoTemplate mongoTemplate;
 
     private static Map<String, Sinks.Many<Chat>> chatSinkMap =
             new ConcurrentHashMap<>();
+
+    @PostConstruct
+    public void setup() {
+        mongoTemplate.changeStream(ChatDocument.class)
+                .listen()
+                .doOnNext(item -> {
+                    ChatDocument target = item.getBody();
+                    OperationType operationType = item.getOperationType();
+
+                    log.info("target: {}", target);
+                    log.info("type: {}", operationType);
+
+                    if (target != null && operationType == OperationType.INSERT) {
+                        String from = target.getFrom();
+                        String to = target.getTo();
+                        String message = target.getMessage();
+
+                        doSend(from, to, message);
+                    }
+                })
+                .subscribe();
+    }
 
     public Flux<Chat> register(String iam) {
         Sinks.Many<Chat> sink = Sinks.many().unicast().onBackpressureBuffer();
