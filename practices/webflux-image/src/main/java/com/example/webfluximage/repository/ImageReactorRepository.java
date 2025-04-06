@@ -54,6 +54,12 @@ public class ImageReactorRepository {
         });
     }
 
+    public Mono<ImageEntity> create(String id, String name, String url) {
+        var map = Map.of("id", id, "name", name, "url", url);
+        return hashOperations.putAll(id, map)
+                .then(findById(id));
+    }
+
     public Mono<ImageEntity> findWithContext() {
         return Mono.deferContextual(context -> {
             Optional<UserEntity> userOptional = context.getOrEmpty("user");

@@ -1,5 +1,6 @@
 package com.example.webfluximage.handler;
 
+import com.example.webfluximage.handler.dto.CreateRequest;
 import com.example.webfluximage.handler.dto.ImageResponse;
 import com.example.webfluximage.service.ImageService;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +26,18 @@ public class ImageHandler {
                 ).flatMap(imageResponse ->
                         ServerResponse.ok().bodyValue(imageResponse)
                 ).onErrorMap(e -> new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage()));
+    }
+
+    public Mono<ServerResponse> addImage(ServerRequest request) {
+        return request.bodyToMono(CreateRequest.class)
+                .flatMap(createRequest ->
+                        imageService.createImage(
+                                createRequest.getId(),
+                                createRequest.getName(),
+                                createRequest.getUrl()
+                        )
+                ).flatMap(imageResponse ->
+                        ServerResponse.ok().bodyValue(imageResponse)
+        );
     }
 }
