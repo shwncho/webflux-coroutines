@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.ReactiveHashOperations;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
+import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
+@Repository
 public class ImageReactorRepository {
     private final ReactiveHashOperations<String,String,String> hashOperations;
 
