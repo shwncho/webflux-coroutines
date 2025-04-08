@@ -25,7 +25,8 @@ public class NotificationService {
     }
 
     public void tryEmitNext(String message) {
-        streamOperations.add(STREAM_NAME, Map.of("message", message));
         log.info("message: {}", message);
+        streamOperations.add(STREAM_NAME, Map.of("message", message))
+                .subscribe();
     }
 }
